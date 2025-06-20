@@ -67,9 +67,11 @@ const AppNavigator = () => {
       <Stack.Navigator 
         initialRouteName="Splash"
         screenOptions={{ headerShown: false }}>
+
+          
         <Stack.Screen name="Splash" component={SplashScreen} />
         <Stack.Screen name="LoginScreen" component={LoginScreen} />
-        <Stack.Screen name="SignUpScreen" component={SignUpScreen} />
+        <Stack.Screen name="SignUpScreen"  component={SignUpScreen} />
         <Stack.Screen name="MainTabs" component={MainTabs} />
         <Stack.Screen name="StoryNavigator" component={StoryNavigator} />
         <Stack.Screen name="UserProfile" component={UserProfileScreen} />
