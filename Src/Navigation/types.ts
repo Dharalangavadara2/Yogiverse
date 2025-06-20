@@ -7,6 +7,7 @@ export type RootStackParamList = {
   MainTab: NavigatorScreenParams<MainTabParamList>;
   RoleSelection: undefined;
   Profile: undefined;
+  UserProfile: { userId: string };
   HighlightViewer: { highlightId: string };
   PostDetails: { postId: string };
   StoryCreation: undefined;
@@ -36,6 +37,7 @@ export type HomeStackParamList = {
 export type SearchStackParamList = {
   Search: undefined;
   SearchDetail: { id: string };
+  SubCateGoryDisplay: { item: any };
 };
 
 export type CreatePostStackParamList = {

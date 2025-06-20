@@ -147,6 +147,38 @@ export const getProfile = async (): Promise<ApiResponse> => {
   };
 };
 
+// Fetch posts for the logged-in user
+export const getUserPosts = async (): Promise<ApiResponse> => {
+  const response = await api.get('/posts/');
+  return {
+    data: response.data,
+    status: response.status,
+    message: 'Posts fetched successfully',
+  };
+};
+
+// Fetch following count for the logged-in user
+export const getFollowingCount = async (): Promise<ApiResponse> => {
+  const response = await api.get('/follower/following');
+  return {
+    data: response.data,
+    status: response.status,
+    message: 'Following count fetched successfully',
+  };
+};
+
+// Fetch followers count for the logged-in user
+export const getFollowersCount = async (): Promise<ApiResponse> => {
+  const response = await api.get('/follower/followers');
+  console.log("here ....",response?.data?.data);
+  
+  return {
+    data: response.data,
+    status: response.status,
+    message: 'Followers count fetched successfully',
+  };
+};
+
 export const fetchCountries = async (page = 1, limit = 10): Promise<ApiResponse> => {
   try {
     const response = await api.get('/helper_app/countries/', { params: { page, limit } });
@@ -189,7 +221,7 @@ export const fetchCities = async (stateId: number, page = 1, limit = 10): Promis
   }
 };
 
-const _REQUEST2SERVER_Authorization_Post_FCM = async (url, params = null) => {
+const _REQUEST2SERVER_Authorization_Post_FCM = async (url: string, params: any = null) => {
   const token = await AsyncStorage.getItem('emp_token');
   var config = {
     method: 'post',
@@ -213,11 +245,11 @@ const _REQUEST2SERVER_Authorization_Post_FCM = async (url, params = null) => {
       });
   });
 };
-export const onAddDevicesAPICall = (params) => {
+export const onAddDevicesAPICall = (params: any) => {
   return _REQUEST2SERVER_Authorization_Post_FCM(`/fcm-token/`, params);
 };
 
-const registerFCMToken = async (token) => {
+const registerFCMToken = async (token: string) => {
   try {
     const authToken = await AsyncStorage.getItem('authToken'); // Get your auth token
     if (!authToken) {

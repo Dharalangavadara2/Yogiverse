@@ -45,6 +45,9 @@ import VendorDetailScreen from '../Screens/Vender/VenderDetail';
 import PostPreviewScreen from '../Screens/Post/PostPreviewScreen';
 import ReelEditorScreen from '../Screens/Post/ReelEditorScreennew';
 import ProfilePostDetailScreen from '../Screens/Profile/ProfilePostDetailScreen';
+import UserProfileScreen from '../Screens/Profile/UserProfileScreen';
+import CommentScreen from "../Screens/Comments/CommentScreen";
+import SubCateGoryDisplay from '../Screens/Search/SubCateGoryDisplay';
 // import VendorStackScreen from '../Screens/Vendor/VendorStack';
 
 const Stack = createNativeStackNavigator<RootStackParamList>();
@@ -366,6 +369,10 @@ const Navigation = () => {
         <Stack.Screen name="MainTab" component={MainTabScreen} />
         <Stack.Screen name="Auth" component={AuthStackScreen} />
         <Stack.Screen name="StoryCreation" component={StoryCreation} />
+        <Stack.Screen name="UserProfile" component={UserProfileScreen} />
+        <Stack.Screen name="CommentScreen" component={CommentScreen} />
+        <Stack.Screen name="SubCateGoryDisplay" component={SubCateGoryDisplay} />
+
       </Stack.Navigator>
     </NavigationContainer>
   
