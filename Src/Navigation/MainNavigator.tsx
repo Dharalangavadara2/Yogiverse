@@ -56,7 +56,7 @@ const MainNavigator = () => {
         },
         tabBarActiveTintColor: '#0095f6',
         tabBarInactiveTintColor: '#8e8e8e',
-        tabBarShowLabel: true,
+        tabBarShowLabel: false,
         tabBarStyle: {
           height: 60,
           paddingBottom: 10,
