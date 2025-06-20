@@ -273,7 +273,7 @@ function MainTabScreen() {
         },
         tabBarActiveTintColor: '#bea063',
         tabBarInactiveTintColor: '#8e8e8e',
-        tabBarShowLabel: true,
+        // tabBarShowLabel: true,
         tabBarStyle: {
           height: 60,
           paddingBottom: 10,
@@ -299,7 +299,7 @@ function MainTabScreen() {
         name="SearchTab" 
         component={SearchStackScreen}
         options={{
-          tabBarLabel: 'Search',
+          // tabBarLabel: 'Search',
         }}
       />
       <MainTabs.Screen 
@@ -313,7 +313,7 @@ function MainTabScreen() {
         name="VendorTab" 
         component={VendorStackScreen}
         options={{
-          tabBarLabel: 'Vendor',
+          tabBarLabel: 'Yogic',
         }}
       />
       <MainTabs.Screen 

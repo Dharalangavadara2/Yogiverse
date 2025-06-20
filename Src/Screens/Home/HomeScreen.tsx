@@ -175,7 +175,7 @@ const styles = StyleSheet.create({
     justifyContent: 'space-between',
     alignItems: 'center',
     padding: 15,
-    borderBottomWidth: 1,
+    borderBottomWidth: 0.5,
     borderBottomColor: '#bea063',
   },
   logo: {
@@ -217,8 +217,8 @@ const styles = StyleSheet.create({
     width: 70,
     height: 70,
     borderRadius: 35,
-    borderWidth: 3,
-    borderColor: '#E1306C',
+    borderWidth: 2,
+    borderColor: '#ac8a48',
   },
   storyUsername: {
     fontSize: 12,
