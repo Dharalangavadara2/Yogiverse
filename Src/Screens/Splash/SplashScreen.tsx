@@ -4,6 +4,7 @@ import AsyncStorage from '@react-native-async-storage/async-storage';
 import { useNavigation } from '@react-navigation/native';
 import { NativeStackNavigationProp } from '@react-navigation/native-stack';
 import { RootStackParamList } from '../../Navigation/types';
+import { reset } from '../../Component/Route';
 
 type SplashNavProp = NativeStackNavigationProp<RootStackParamList, 'SplashScreen'>;
 
@@ -22,23 +23,26 @@ const SplashScreen = () => {
 
         setTimeout(() => {
           if (isLoggedIn) {
-            navigation.reset({
-              index: 0,
-              routes: [{ name: 'MainTab' }],
-            });
+            reset('MainTab')
+            // navigation.reset({
+            //   index: 0,
+            //   routes: [{ name: 'MainTab' }],
+            // });
           } else {
-            navigation.reset({
-              index: 0,
-              routes: [{ name: 'Auth' }],
-            });
+            reset('Login')
+            // navigation.reset({
+            //   index: 0,
+            //   routes: [{ name: 'Auth' }],
+            // });
           }
         }, 1500); // 1.5 sec splash delay
       } catch (error) {
         console.error('Splash auth check error:', error);
-        navigation.reset({
-          index: 0,
-          routes: [{ name: 'Auth' }],
-        });
+        reset('Login')
+        // navigation.reset({
+        //   index: 0,
+        //   routes: [{ name: 'Auth' }],
+        // });
       }
     };
 

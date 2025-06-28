@@ -48,7 +48,12 @@ import ProfilePostDetailScreen from '../Screens/Profile/ProfilePostDetailScreen'
 import UserProfileScreen from '../Screens/Profile/UserProfileScreen';
 import CommentScreen from "../Screens/Comments/CommentScreen";
 import SubCateGoryDisplay from '../Screens/Search/SubCateGoryDisplay';
+import TrendingDetailScreen from '../Screens/TrendingDetailScreen';
 // import VendorStackScreen from '../Screens/Vendor/VendorStack';
+import { navigationRef } from '../Component/Route';
+import FollowersFollowingScreen from '../Screens/Profile/FollowersFollowingScreen';
+import UploadPost from '../Screens/Post/UploadPost';
+import PreViewForPost from '../Screens/Post/PreViewForPost';
 
 const Stack = createNativeStackNavigator<RootStackParamList>();
 const AuthStack = createNativeStackNavigator<AuthStackParamList>();
@@ -125,6 +130,7 @@ function SearchStackScreen() {
     <SearchStack.Navigator screenOptions={{ headerShown: false }}>
       <SearchStack.Screen name="Search" component={SearchScreen} />
       <SearchStack.Screen name="SearchDetail" component={SearchDetailScreen}/>
+      <SearchStack.Screen name="TrendingDetailScreen" component={TrendingDetailScreen}/>
     </SearchStack.Navigator>
   );
 }
@@ -360,22 +366,42 @@ const Navigation = () => {
   }
 
   return (
-  
-  
-    
-       <NavigationContainer>
+    <NavigationContainer 
+    onStateChange={(state) => {
+
+      const currentRouteName = navigationRef.current.getCurrentRoute().name;
+
+      
+      navigationRef.current.previousRouteName = currentRouteName;
+  }}
+    ref={navigationRef}>
       <Stack.Navigator screenOptions={{ headerShown: false }}>
         <Stack.Screen name="SplashScreen" component={SplashScreen} />
         <Stack.Screen name="MainTab" component={MainTabScreen} />
         <Stack.Screen name="Auth" component={AuthStackScreen} />
-        <Stack.Screen name="StoryCreation" component={StoryCreation} />
         <Stack.Screen name="UserProfile" component={UserProfileScreen} />
         <Stack.Screen name="CommentScreen" component={CommentScreen} />
         <Stack.Screen name="SubCateGoryDisplay" component={SubCateGoryDisplay} />
-
+        <Stack.Screen name="ProfilePostDetailScreen" component={ProfilePostDetailScreen} />
+        <Stack.Screen name="CreatePostHome" component={CreatePostScreen} />
+        <Stack.Screen name="Post" component={PostScreen} />
+        <Stack.Screen name="PostDetails" component={PostDetailsScreen} />
+        <Stack.Screen name="PostPreview" component={PostPreviewScreen} />
+        <Stack.Screen name="ReelEditor" component={ReelEditorScreen} />
+        <Stack.Screen name="ReelPreview" component={ReelPreviewScreen} />
+        <Stack.Screen name="ReelCamera" component={ReelCameraScreen} />
+        <Stack.Screen name="ProfileStack" component={ProfileStackScreen} />
+        <Stack.Screen name="Login" component={LoginScreen} />
+        <Stack.Screen name="SignUp" component={SignUpScreen} />
+        <Stack.Screen name="ForgotPassword" component={ForgotPasswordScreen} />
+        <Stack.Screen name="RoleSelection" component={RoleSelectionScreen}/>
+        <Stack.Screen name="FollowersFollowingScreen" component={FollowersFollowingScreen} />
+        <Stack.Screen name="UploadPost" component={UploadPost} />
+        <Stack.Screen name="UploadOptionsScreen" component={UploadOptionsScreen} />
+        <Stack.Screen name="PreViewForPost" component={PreViewForPost} />
+        <Stack.Screen name="StoryCreation" component={StoryCreation} /> 
       </Stack.Navigator>
     </NavigationContainer>
-  
   );
 };
 

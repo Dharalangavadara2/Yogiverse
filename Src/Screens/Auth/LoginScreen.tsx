@@ -14,6 +14,7 @@ import AsyncStorage from '@react-native-async-storage/async-storage';
 import { useNavigation } from '@react-navigation/native';
 import Icon from 'react-native-vector-icons/Ionicons';
 import { useBackHandler } from '../../Utils/BackHandler';
+import { navigate, reset } from '../../Component/Route';
 
 const STATUSBAR_HEIGHT = Platform.OS === 'ios' ? 50 : StatusBar.currentHeight || 0;
 
@@ -57,10 +58,12 @@ const LoginScreen: React.FC<LoginScreenProps> = () => {
         );
         
         // Navigate to main tab using reset
-        navigation.reset({
-    index: 0,
-    routes: [{ name: 'MainTab' }], 
-  });
+        reset('MainTab')
+  //       navigation.reset({
+  //   index: 0,
+  //   routes: [{ name: 'MainTab' }], 
+  // });
+  
       } else {
         Alert.alert('Login Failed', 'Invalid username or password');
       }
@@ -115,7 +118,11 @@ const LoginScreen: React.FC<LoginScreenProps> = () => {
                 </TouchableOpacity>
               </View>
               {touched.password && errors.password && <Text style={styles.errorText}>{errors.password}</Text>}
-              <TouchableOpacity style={styles.forgotPassword} onPress={() => navigation.navigate('Auth', { screen: 'ForgotPassword' })}>
+              <TouchableOpacity style={styles.forgotPassword} onPress={() => 
+               navigate('ForgotPassword')
+
+
+                }>
                 <Text style={styles.forgotPasswordText}>Forgot Password?</Text>
               </TouchableOpacity>
               <TouchableOpacity style={styles.loginButton} onPress={() => handleSubmit()}>
@@ -126,7 +133,11 @@ const LoginScreen: React.FC<LoginScreenProps> = () => {
                 <Text style={styles.dividerText}>OR</Text>
                 <View style={styles.dividerLine} />
               </View>
-              <TouchableOpacity style={styles.signupButton} onPress={() => navigation.navigate('Auth', { screen: 'RoleSelection' })}>
+              <TouchableOpacity style={styles.signupButton} onPress={() => 
+                navigate('RoleSelection')
+
+
+                }>
                 <Text style={styles.signupButtonText}>
                   Don't have an account? Sign up
                 </Text>

@@ -9,11 +9,17 @@ import {
   Alert,
   ActivityIndicator,
   FlatList,
+  Modal,
+  SectionList,
 } from 'react-native';
-import Ionicons from 'react-native-vector-icons/Ionicons';
+import Icon from 'react-native-vector-icons/Ionicons';
 import Video from 'react-native-video';
 import axios from 'axios';
 import AsyncStorage from '@react-native-async-storage/async-storage';
+import { useNavigation } from '@react-navigation/native';
+import type { NativeStackNavigationProp } from '@react-navigation/native-stack';
+import type { RootStackParamList } from '../Navigation/types';
+
 
 interface PostProps {
   id: string;
@@ -31,6 +37,8 @@ interface PostProps {
   location?: string;
   createdAt?: string;
   profile?: any;
+  item?: any;
+  onDelete?: (id: string) => void;
 }
 
 const fallbackAvatar = require('../Assets/yoga.jpg');
@@ -52,6 +60,8 @@ const Post: React.FC<PostProps> = ({
   location = '',
   createdAt = '',
   profile = {},
+  item,
+  onDelete,
 }) => {
   const [isLiked, setIsLiked] = useState(initialIsLiked);
   const [likesCount, setLikesCount] = useState(likes);
@@ -59,13 +69,17 @@ const Post: React.FC<PostProps> = ({
   const [showFallbackAvatar, setShowFallbackAvatar] = useState(false);
   const [showFallbackPostImage, setShowFallbackPostImage] = useState(false);
   const [activeIndex, setActiveIndex] = useState(0);
+  const [optionsVisible, setOptionsVisible] = useState(false);
+  const [deleteLoading, setDeleteLoading] = useState(false);
+  const navigations = useNavigation<NativeStackNavigationProp<RootStackParamList>>();
+
 
   const getMediaUri = (item: any) => {
     if (item.media_file) return item.media_file.startsWith('http') ? item.media_file : `http://192.168.1.160:9001${item.media_file}`;
     if (item.file) return item.file.startsWith('http') ? item.file : `http://192.168.1.160:9001${item.file}`;
     return null;
   };
-console.log("id.....",id,contentType);
+console.log("id.....", item?.profile?.id , id);
 
   const handleLike = async () => {
     const authToken = await AsyncStorage.getItem('accessToken');
@@ -78,9 +92,11 @@ console.log("id.....",id,contentType);
     setIsLiked(!isLiked);
     setLikesCount(isLiked ? likesCount - 1 : likesCount + 1);
     try {
-      let like = await axios.post('http://192.168.1.160:9001/like-toggle/', {
-        content_type: contentType,
-        object_id: id,
+      console.log("contentType .....",contentType,id);
+      
+      let like = await axios.post('https://pashuahar.com/like-toggle/', {
+        content_type: contentType == "reel" ? "reel" : "post",
+        object_id: item?.profile?.id ? item?.profile?.id : id,
       },{headers});
       console.log("like .....",like);
       
@@ -97,10 +113,55 @@ console.log("id.....",id,contentType);
   };
 
   const handleComment = () => {
-    navigation.navigate('CommentScreen', {
-      content_type: contentType,
-      object_id: id,
+    // Navigate to CommentScreen with correct params
+    navigations.navigate('CommentScreen', {
+      content_type: contentType === 'reel' ? 'reel' : 'post',
+      object_id: item?.profile?.id ? item?.profile?.id : id,
     });
+  };
+  const sections = [
+    {
+      title: 'Media',
+      data: media, // array of images/videos
+    },
+  ];
+  const handleShare = () => {
+    // You can implement your share logic here (e.g., Share API)
+    Alert.alert('Share', 'Share functionality coming soon!');
+  };
+
+  const handleOptions = () => {
+    setOptionsVisible(true);
+  };
+
+  const handleDelete = async () => {
+    setDeleteLoading(true);
+    try {
+      // Example: https://pashuahar.com/collections/1/post/1/
+      // You may need to adjust collection/post IDs as per your data
+      const authToken = await AsyncStorage.getItem('accessToken');
+      const headers = {
+        'Accept': 'application/json',
+        'Authorization': `Bearer ${authToken}`
+      };
+      // Assuming collectionId is available in item or profile
+      const collectionId = item?.collection_id || profile?.collection_id || 1;
+      const postId = id;
+      await axios.delete(`https://pashuahar.com/collections/${collectionId}/post/${postId}/`, { headers });
+      setOptionsVisible(false);
+      if (onDelete) onDelete(id);
+      Alert.alert('Deleted', 'Post deleted successfully.');
+    } catch (err) {
+      Alert.alert('Error', 'Failed to delete post.');
+    } finally {
+      setDeleteLoading(false);
+    }
+  };
+
+  const handleEdit = async () => {
+    setOptionsVisible(false);
+    // You can navigate to an edit screen or call the edit API here
+    Alert.alert('Edit', 'Edit functionality coming soon!');
   };
 
   return (
@@ -117,52 +178,104 @@ console.log("id.....",id,contentType);
             {!!location && <Text style={styles.location}>{location}</Text>}
           </View>
         </View>
-        <TouchableOpacity>
-          <Ionicons name="ellipsis-vertical" size={20} color="#000" />
+        <TouchableOpacity onPress={handleOptions}>
+          <>
+            {/* @ts-ignore */}
+            <Icon name="ellipsis-vertical" size={20} color="#000" />
+          </>
         </TouchableOpacity>
       </View>
 
       {media.length > 0 ? (
-        <FlatList
-          data={media}
-          horizontal
-          pagingEnabled
-          showsHorizontalScrollIndicator={false}
-          keyExtractor={(_, idx) => idx.toString()}
-          onMomentumScrollEnd={e => {
-            const index = Math.round(e.nativeEvent.contentOffset.x / e.nativeEvent.layoutMeasurement.width);
-            setActiveIndex(index);
-          }}
-          renderItem={({ item, index }) => {
-            const uri = getMediaUri(item);
-            if (item.is_video && uri) {
-              const isActive = index === activeIndex;
-              return (
-                <View style={styles.postImage}>
-                  <Video
-                    source={{ uri }}
-                    style={styles.postImage}
-                    resizeMode="cover"
-                    paused={!isActive}
-                    repeat
-                  />
-                  {!isActive && (
-                    <View style={{ position: 'absolute', top: '45%', left: '45%' }}>
-                      <Ionicons name="play-circle" size={48} color="#fff" />
-                    </View>
-                  )}
-                </View>
-              );
-            }
+        <SectionList
+        horizontal
+        pagingEnabled
+        sections={sections}
+        showsHorizontalScrollIndicator={false}
+        keyExtractor={(_, idx) => idx.toString()}
+        contentContainerStyle={{ flexDirection: 'row' }}
+        onMomentumScrollEnd={e => {
+          const index = Math.round(
+            e.nativeEvent.contentOffset.x / e.nativeEvent.layoutMeasurement.width
+          );
+          setActiveIndex(index);
+        }}
+        renderItem={({ item, index }) => {
+          const uri = getMediaUri(item);
+          const isActive = index === activeIndex;
+      
+          if (item.is_video && uri) {
             return (
-              <Image
-                source={uri ? { uri } : fallbackPostImage}
-                style={styles.postImage}
-                onError={() => setShowFallbackPostImage(true)}
-              />
+              <View style={styles.postImage}>
+                <Video
+                  source={{ uri }}
+                  style={styles.postImage}
+                  resizeMode="cover"
+                  paused={!isActive}
+                  repeat
+                />
+                {!isActive && (
+                  <View style={{ position: 'absolute', top: '45%', left: '45%' }}>
+                    <Icon name="play-circle" size={48} color="#fff" />
+                  </View>
+                )}
+              </View>
             );
-          }}
-        />
+          }
+      
+          return (
+            <Image
+              source={uri ? { uri } : fallbackPostImage}
+              style={styles.postImage}
+              onError={() => setShowFallbackPostImage(true)}
+            />
+          );
+        }}
+        renderSectionHeader={() => null}
+      />
+        // <FlatList
+        //   data={media}
+        //   horizontal
+        //   pagingEnabled
+        //   showsHorizontalScrollIndicator={false}
+        //   keyExtractor={(_, idx) => idx.toString()}
+        //   onMomentumScrollEnd={e => {
+        //     const index = Math.round(e.nativeEvent.contentOffset.x / e.nativeEvent.layoutMeasurement.width);
+        //     setActiveIndex(index);
+        //   }}
+        //   renderItem={({ item, index }) => {
+        //     const uri = getMediaUri(item);
+        //     if (item.is_video && uri) {
+        //       const isActive = index === activeIndex;
+        //       return (
+        //         <View style={styles.postImage}>
+        //           <Video
+        //             source={{ uri }}
+        //             style={styles.postImage}
+        //             resizeMode="cover"
+        //             paused={!isActive}
+        //             repeat
+        //           />
+        //           {!isActive && (
+        //             <View style={{ position: 'absolute', top: '45%', left: '45%' }}>
+        //               <>
+        //                 {/* @ts-ignore */}
+        //                 <Icon name="play-circle" size={48} color="#fff" />
+        //               </>
+        //             </View>
+        //           )}
+        //         </View>
+        //       );
+        //     }
+        //     return (
+        //       <Image
+        //         source={uri ? { uri } : fallbackPostImage}
+        //         style={styles.postImage}
+        //         onError={() => setShowFallbackPostImage(true)}
+        //       />
+        //     );
+        //   }}
+        // />
       ) : null}
       {/* Pagination dots */}
       {media.length > 1 && (
@@ -187,22 +300,55 @@ console.log("id.....",id,contentType);
           {likeLoading ? (
             <ActivityIndicator size={20} color="#FF3B30" />
           ) : (
-            <Ionicons
-              name={isLiked ? 'heart' : 'heart-outline'}
-              size={28}
-              color={isLiked ? '#FF3B30' : '#000'}
-            />
+            <>
+              {/* @ts-ignore */}
+              <Icon
+                name={isLiked ? 'heart' : 'heart-outline'}
+                size={28}
+                color={isLiked ? '#FF3B30' : '#000'}
+              />
+            </>
           )}
         </TouchableOpacity>
         {allowComments && (
           <TouchableOpacity style={styles.actionButton} onPress={handleComment}>
-            <Ionicons name="chatbubble-outline" size={24} color="#000" />
+            <>
+              {/* @ts-ignore */}
+              <Icon name="chatbubble-outline" size={24} color="#000" />
+            </>
           </TouchableOpacity>
         )}
-        <TouchableOpacity style={styles.actionButton}>
-          <Ionicons name="paper-plane-outline" size={24} color="#000" />
+        <TouchableOpacity style={styles.actionButton} onPress={handleShare}>
+          <>
+            {/* @ts-ignore */}
+            <Icon name="paper-plane-outline" size={24} color="#000" />
+          </>
         </TouchableOpacity>
       </View>
+
+      {/* Options Modal */}
+      <Modal
+        visible={optionsVisible}
+        transparent
+        animationType="fade"
+        onRequestClose={() => setOptionsVisible(false)}
+      >
+        <TouchableOpacity
+          style={{ flex: 1, backgroundColor: 'rgba(0,0,0,0.3)', justifyContent: 'center', alignItems: 'center' }}
+          activeOpacity={1}
+          onPressOut={() => setOptionsVisible(false)}
+        >
+          <View style={{ backgroundColor: '#fff', borderRadius: 10, padding: 20, minWidth: 180 }}>
+            <TouchableOpacity onPress={handleEdit} style={{ paddingVertical: 10 }}>
+              <Text style={{ fontSize: 16 }}>Edit</Text>
+            </TouchableOpacity>
+            <TouchableOpacity onPress={handleDelete} style={{ paddingVertical: 10, flexDirection: 'row', alignItems: 'center' }}>
+              {deleteLoading ? <ActivityIndicator size={18} color="#E74C3C" style={{ marginRight: 8 }} /> : null}
+              <Text style={{ fontSize: 16, color: '#E74C3C' }}>Delete</Text>
+            </TouchableOpacity>
+          </View>
+        </TouchableOpacity>
+      </Modal>
 
       <View style={styles.likesContainer}>
         {!hideLikeCount && <Text style={styles.likes}>{likesCount} likes</Text>}
@@ -263,11 +409,11 @@ const styles = StyleSheet.create({
   },
   actions: {
     flexDirection: 'row',
-    padding: 10,
     alignItems: 'center',
+    padding: 10,
   },
   actionButton: {
-    marginLeft: 15,
+    marginLeft: 16,
   },
   likesContainer: {
     paddingHorizontal: 10,

@@ -36,7 +36,7 @@ interface LoginCredentials {
 }
 
 // API Configuration
-export const BASE_URL = 'http://192.168.1.160:9001';  // Your local API endpoint
+export const BASE_URL = 'https://pashuahar.com/';  // Your local API endpoint
 
 export const API_INTERNET_CONNECTION_CAPTION_EN =
   'Sorry, No Internet connectivity detected. Please reconnect and try again';
@@ -157,6 +157,16 @@ export const getUserPosts = async (): Promise<ApiResponse> => {
   };
 };
 
+// Fetch reels for the logged-in user
+export const getUserReels = async (): Promise<ApiResponse> => {
+  const response = await api.get('/reels/');
+  return {
+    data: response.data,
+    status: response.status,
+    message: 'Reels fetched successfully',
+  };
+};
+
 // Fetch following count for the logged-in user
 export const getFollowingCount = async (): Promise<ApiResponse> => {
   const response = await api.get('/follower/following');
@@ -176,6 +186,28 @@ export const getFollowersCount = async (): Promise<ApiResponse> => {
     data: response.data,
     status: response.status,
     message: 'Followers count fetched successfully',
+  };
+};
+
+// Post creation API
+export const postPosts = async ({ formData }: { formData: FormData }): Promise<ApiResponse> => {
+  const response = await api.post('/posts/', formData);
+  return {
+    data: response.data,
+    status: response.status,
+    message: 'Post created successfully',
+  };
+};
+
+// Story creation API
+export const postStories = async ({ formData }: { formData: FormData }): Promise<ApiResponse> => {
+  console.log("formData inside postStories",formData);
+  
+  const response = await api.post('/stories/', formData);
+  return {
+    data: response.data,
+    status: response.status,
+    message: 'Story created successfully',
   };
 };
 

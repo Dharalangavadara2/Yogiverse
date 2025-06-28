@@ -5,8 +5,9 @@ import Icon from 'react-native-vector-icons/Ionicons';
 import axios from 'axios';
 import Post from '../../Component/Post';
 import ShareModal from '../../Components/ShareModal';
-import { Post as PostType } from 'Src/Types';
+import { Post as PostType, Story } from 'Src/Types';
 import AsyncStorage from '@react-native-async-storage/async-storage';
+import { navigate } from '../../Component/Route';
 
 
 const dummyStories = [
@@ -26,6 +27,8 @@ export default function HomeScreen() {
   const [loading, setLoading] = useState(true);
   const [refreshing, setRefreshing] = useState(false);
   const [error, setError] = useState<string | null>(null);
+  const [stories, setStories] = useState<Story[]>([]);
+
 
   const fetchPosts = async () => {
     setLoading(true);
@@ -36,8 +39,8 @@ export default function HomeScreen() {
         'Accept': 'application/json',
         'Authorization': `Bearer ${authToken}`
       };
-      const res = await axios.get('http://192.168.1.160:9001/home-feed/',{headers});
-      console.log("res .....",res?.data?.data?.results);
+      const res = await axios.get('https://pashuahar.com/home-feed/',{headers});
+      // console.log("res .....",res?.data?.data?.results);
       
       setPosts(res.data?.data?.results|| []);
     } catch (err) {
@@ -81,7 +84,7 @@ export default function HomeScreen() {
     if (!userAvatar) userAvatar = Image.resolveAssetSource(require('../../Assets/yoga.jpg')).uri;
     return (
       <Post
-        id={post.id?.toString()}
+        id={post?.id?.toString()}
         username={profile.username || ''}
         media={post.media || []}
         caption={post.caption || ''}
@@ -96,6 +99,7 @@ export default function HomeScreen() {
         location={post.location || ''}
         createdAt={post.created_at || ''}
         profile={profile}
+        item={item}
       />
     );
   };
@@ -106,7 +110,11 @@ export default function HomeScreen() {
       <View style={styles.header}>
         <Image source={require('../../Assets/Logo.png')} style={{ width: 100, height: 30 }} resizeMode='contain' />
         <View style={styles.headerIcons}>
-          <TouchableOpacity onPress={() => navigation.navigate('Notifications' as never)}>
+          <TouchableOpacity onPress={() => 
+            navigate('Notifications')
+
+
+            }>
             // @ts-ignore
             <Icon name="heart-outline" size={24} color="#bea063" style={styles.icon} />
           </TouchableOpacity>
@@ -119,26 +127,34 @@ export default function HomeScreen() {
 
       {/* Stories Section */}
       <FlatList
-        data={dummyStories}
-        horizontal
-        showsHorizontalScrollIndicator={false}
-        keyExtractor={(item) => item.id}
-        contentContainerStyle={styles.storyList}
-        renderItem={({ item }) => (
-          item.type === 'add' ? (
-            <TouchableOpacity style={styles.addStoryButton} onPress={() => {}}>
-              // @ts-ignore
-              <Icon name="add" size={30} color="#fff" />
-              <Text style={styles.addStoryText}>Add Story</Text>
-            </TouchableOpacity>
-          ) : (
-            <TouchableOpacity style={styles.storyItem} onPress={() => {}}>
-              <Image source={item.avatar} style={styles.storyAvatar} />
-              <Text style={styles.storyUsername} numberOfLines={1}>{item.user}</Text>
-            </TouchableOpacity>
-          )
-        )}
-      />
+          data={[{ id: 'add', type: 'add' }, ...stories]}
+          horizontal
+          showsHorizontalScrollIndicator={false}
+          keyExtractor={(item) => item.id}
+          contentContainerStyle={styles.storyList}
+          renderItem={({ item }) => {
+            console.log("here comes item .....",item);
+            if ('type' in item && item.type === 'add') {
+              return (
+                <TouchableOpacity style={styles.addStoryButton} onPress={() => navigation.navigate('StoryCreation')}>
+                  {/* @ts-ignore */}
+                  <Icon name="add" size={30} color="#fff" />
+                  <Text style={styles.addStoryText}>Add Story</Text>
+                </TouchableOpacity>
+              );
+            } else {
+              const story = item as Story;
+              // fallback for dummy data avatar
+              const avatar = story.userProfilePicture || require('../../Assets/yoga.jpg');
+              return (
+                <TouchableOpacity style={styles.storyItem} onPress={() => navigation.navigate('StoryViewerScreen', { story })}>
+                  <Image source={typeof avatar === 'string' ? { uri: avatar } : avatar} style={styles.storyAvatar} />
+                  <Text style={styles.storyUsername} numberOfLines={1}>{story.username}</Text>
+                </TouchableOpacity>
+              );
+            }
+          }}
+        />
 
       {/* Posts Section */}
       {loading ? (

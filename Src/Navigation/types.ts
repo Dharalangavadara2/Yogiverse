@@ -11,6 +11,18 @@ export type RootStackParamList = {
   HighlightViewer: { highlightId: string };
   PostDetails: { postId: string };
   StoryCreation: undefined;
+  ProfilePostDetailScreen: any;
+  CreatePostHome: any;
+  Post: any;
+  PostPreview: any;
+  ReelEditor: any;
+  ReelPreview: any;
+  ReelCamera: any;
+  ProfileStack: any;
+  Login: any;
+  SignUp: any;
+  ForgotPassword: any;
+  FollowersFollowingScreen: { type: 'followers' | 'following'; userId: string; username: string };
 };
 
 export type AuthStackParamList = {
@@ -38,6 +50,7 @@ export type SearchStackParamList = {
   Search: undefined;
   SearchDetail: { id: string };
   SubCateGoryDisplay: { item: any };
+  TrendingDetailScreen: { post: any };
 };
 
 export type CreatePostStackParamList = {

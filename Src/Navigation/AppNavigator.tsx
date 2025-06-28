@@ -19,6 +19,13 @@ import SearchDetailScreen from '../Screens/Search/SearchDetailScreen';
 import { ReelPlayer } from '../Screens/Profile/ReelPlayer';
 import CommentScreen from '../Screens/Comments/CommentScreen';
 import SubCateGoryDisplay from 'Src/Screens/Search/SubCateGoryDisplay';
+import TrendingDetailScreen from '../Screens/TrendingDetailScreen';
+import ReelCameraScreen from 'Src/Screens/Post/ReelCameraScreen';
+import UploadPost from 'Src/Screens/Post/UploadPost';
+import UploadOptionsScreen from 'Src/Screens/Post/UploadOptionsScreen';
+import PreViewForPost from 'Src/Screens/Post/PreViewForPost';
+import FollowersFollowingScreen from 'Src/Screens/Profile/FollowersFollowingScreen';
+import StoryCreation from 'Src/Screens/Story/StoryCreation';
 
 const Tab = createBottomTabNavigator();
 const Stack = createNativeStackNavigator();
@@ -78,6 +85,15 @@ const AppNavigator = () => {
         <Stack.Screen name="ReelPlayer" component={ReelPlayer} />
         <Stack.Screen name="CommentScreen" component={CommentScreen} />
         <Stack.Screen name="SubCateGoryDisplay" component={SubCateGoryDisplay} />
+        <Stack.Screen name="UploadPost" component={UploadPost} /> 
+        <Stack.Screen name="UploadOptionsScreen" component={UploadOptionsScreen} />
+        <Stack.Screen name="PreViewForPost" component={PreViewForPost} />
+        <Stack.Screen name="FollowersFollowingScreen" component={FollowersFollowingScreen} />
+        <Stack.Screen name="StoryCreation" component={StoryCreation} />
+        {/* import TrendingDetailScreen from '../Screens/TrendingDetailScreen'; */}
+
+        <Stack.Screen name='TrendingDetailScreen' component={TrendingDetailScreen}/>
+        <Stack.Screen name="ReelCamera" component={ReelCameraScreen} />
 
 
         {/* <Stack.Screen name="SearchDetail" component={SearchDetailScreen}/> */}

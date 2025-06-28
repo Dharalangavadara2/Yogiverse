@@ -61,10 +61,12 @@ const CommentScreen = () => {
   }, [object_id, content_type]);
 
   const fetchComments = async () => {
+    console.log("content_type .....",content_type,object_id);
+    
     try {
       setLoading(true);
       const authToken = await AsyncStorage.getItem('accessToken');
-      const res = await axios.get(`http://192.168.1.160:9001/comment/list`, {
+      const res = await axios.get(`https://pashuahar.com/comment/list`, {
         params: { content_type, object_id },
         headers: {
           'Accept': 'application/json',
@@ -101,7 +103,7 @@ const CommentScreen = () => {
     setPosting(true);
     try {
       const authToken = await AsyncStorage.getItem('accessToken');
-      const response = await axios.post(`http://192.168.1.160:9001/comment/`, {
+      const response = await axios.post(`https://pashuahar.com/comment/`, {
         content_type,
         object_id,
         text: newComment.trim(),
@@ -142,7 +144,9 @@ const CommentScreen = () => {
     }
   };
 
-  const toggleLike = async (commentId: number) => {
+  const toggleLike = async (commentId: number, item: any) => {
+    console.log("item .....",item);
+    
     try {
       const authToken = await AsyncStorage.getItem('accessToken');
       const updatedComments = comments.map(comment => {
@@ -158,7 +162,7 @@ const CommentScreen = () => {
       setComments(updatedComments);
       console.log("here comes ....",content_type,object_id);
       
-     let like =  await axios.post(`http://192.168.1.160:9001/like-toggle/`, {
+     let like =  await axios.post(`https://pashuahar.com/like-toggle/`, {
         content_type, object_id
       }, {
         headers: {
@@ -192,7 +196,7 @@ const CommentScreen = () => {
           <Text style={styles.commentReply}>Reply</Text>
         </View>
       </View>
-      <TouchableOpacity onPress={() => toggleLike(item.id)} style={styles.likeButton}>
+      <TouchableOpacity onPress={() => toggleLike(item.id , item)} style={styles.likeButton}>
         <Icon
           name={item.is_liked ? "heart" : "heart-outline"}
           size={16}
@@ -228,7 +232,14 @@ const CommentScreen = () => {
         {/* Header */}
         <View style={styles.header}>
           <TouchableOpacity onPress={() => {
-                  navigation.navigate('UserProfile' as any, { userId: undefined });
+            navigation.navigate('MainTab', {
+              screen: 'SearchTab',
+              params: {
+                userId: undefined
+              },
+            });
+                 
+                  // navigation.navigate('UserProfile' as any, { userId: undefined });
           }} style={styles.backButton}>
             <Icon name="arrow-back" size={24} color="#000" />
           </TouchableOpacity>

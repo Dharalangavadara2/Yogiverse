@@ -36,6 +36,8 @@ export const UserProfileScreen = () => {
   const flatListRef = useRef<FlatList>(null);
 
   useEffect(() => {
+    console.log("userId",userId);
+    
     if(userId){
     fetchUserProfileData();
     }
@@ -44,7 +46,7 @@ export const UserProfileScreen = () => {
   const fetchUserProfileData = async () => {
     try {
       setLoading(true);
-      const response = await axios.get(`http://192.168.1.160:9001/user_profile/${userId}`);
+      const response = await axios.get(`https://pashuahar.com/user_profile/${userId}`);
       const data = response.data?.data;
       console.log("data.....",data);
       
